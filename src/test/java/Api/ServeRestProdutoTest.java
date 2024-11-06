@@ -38,9 +38,9 @@ public class ServeRestProdutoTest {
                 .contentType(ct)
                 .log().all()
                 .body(jsonBody)
-                .when()
+        .when()
                 .post(uri + "/usuarios")
-                .then()
+        .then()
                 .log().all()
                 .statusCode(201)
                 .body("message", is("Cadastro realizado com sucesso"))
@@ -61,9 +61,9 @@ public class ServeRestProdutoTest {
                 .contentType(ct)
                 .log().all()
                 .body(jsonBody)
-                .when()
+        .when()
                 .post(uri + "/login")
-                .then()
+        .then()
                 .log().all()
                 .statusCode(200)
                 .body("message", is("Login realizado com sucesso"))
@@ -85,9 +85,9 @@ public class ServeRestProdutoTest {
                 .log().all()
                 .header("Authorization", auth)
                 .body(jsonBody)
-                .when()
+        .when()
                 .post(uri + "/produtos")
-                .then()
+        .then()
                 .log().all()
                 .statusCode(201)
                 .body("message", is("Cadastro realizado com sucesso"))
@@ -99,31 +99,68 @@ public class ServeRestProdutoTest {
 
     @Test
     @Order(4)
+    public void GetProdTest(){
+
+        given()
+                .contentType(ct)
+                .log().all()
+                .header("Authorization", auth)
+        .when()
+                .get(uri + "/produtos/" + idProd)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("nome", is("HyperX Pulsefire Core XMAX2"))
+                .body("preco", is(280))
+                .body("quantidade", is(500));
+    }
+
+    @Test
+    @Order(5)
+    public void PutProdTest() throws IOException {
+
+        String jsonBody = lerArquivoJson("src/test/resources/json/ModProd.json");
+
+        given()
+                .contentType(ct)
+                .log().all()
+                .header("Authorization", auth)
+                .body(jsonBody)
+        .when()
+                .put(uri + "/produtos/" + idProd)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("message", is("Registro alterado com sucesso"));
+    }
+
+    @Test
+    @Order(6)
     public void DeleteProdTest(){
 
         given()
                 .contentType(ct)
                 .log().all()
                 .header("Authorization", auth)
-                .when()
+        .when()
                 .delete(uri + "/produtos/" + idProd)
-                .then()
+        .then()
                 .log().all()
                 .statusCode(200)
                 .body("message", is("Registro excluído com sucesso"));
     }
 
     @Test
-    @Order(5)
+    @Order(7)
     public void DeleteUserTest(){
 
         given()
                 .contentType(ct)
                 .log().all()
                 .header("Authorization", auth)
-                .when()
+        .when()
                 .delete(uri + "/usuarios/" + idUser)
-                .then()
+        .then()
                 .log().all()
                 .statusCode(200)
                 .body("message", is("Registro excluído com sucesso"));
