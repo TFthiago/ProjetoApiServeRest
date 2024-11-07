@@ -76,7 +76,7 @@ public class ServeRestProdutoMassaTest {
 
     @ParameterizedTest
     @Order(3)
-    @CsvFileSource(resources = "/csv/prodMassa2.csv", numLinesToSkip = 1, delimiter = ',')
+    @CsvFileSource(resources = "/csv/prodMassa.csv", numLinesToSkip = 1, delimiter = ',')
     public void postProdutoMassaTest(String nome,
                                      int preco,
                                      String descricao,
@@ -109,45 +109,28 @@ public class ServeRestProdutoMassaTest {
         idProd = response.jsonPath().getString("_id");
         System.out.println("O id do produto é: " + idProd);
 
+    //GET Produtos
         given()
                 .contentType(ct)
                 .log().all()
                 .header("Authorization", auth)
         .when()
-                .delete(uri + "/produtos/" + idProd)
+                .get(uri + "/produtos/" + idProd)
         .then()
                 .log().all()
                 .statusCode(200)
-                .body("message", is("Registro excluído com sucesso"));
+                .body("nome", is(nome))
+                .body("preco", is(preco))
+                .body("quantidade", is(quantidade));
+        System.out.println("O nome do produto é: " + nome);
 
-    }
-
-    @Test
-    @Order(4)
-    public void DeleteProdTest(){
-
-        given()
-                .contentType(ct)
-                .log().all()
-                .header("Authorization", auth)
-                .when()
-                .delete(uri + "/produtos/" + idProd)
-                .then()
-                .log().all()
-                .statusCode(200)
-                .body("message", is("Registro excluído com sucesso"));
-    }
-
-    @Test
-    @Order(5)
-    public void DeleteUserTest(){
-
+    //DELETE Produtos
         given()
                 .contentType(ct)
                 .log().all()
                 .header("Authorization", auth)
         .when()
-                .delete(uri + "/usuarios/" + idUser)
+                .delete(uri + "/produtos/" + idProd)
         .then()
                 .log().all()
                 .statusCode(200)
