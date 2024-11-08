@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### id do usuário ###
+/src/test/resources/userId.txt

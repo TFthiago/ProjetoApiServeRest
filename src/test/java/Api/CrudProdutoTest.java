@@ -14,48 +14,24 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ServeRestProdutoTest {
-
-    public static String lerArquivoJson(String arquivoJson) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(arquivoJson)));
-    }
+public class CrudProdutoTest {
 
     public String ct = "application/json";
     public String uri = "https://serverest.dev";
 
     public static String auth;
-    public static String idUser;
     public static String idProd;
+
+    public static String lerArquivoJson(String arquivoJson) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(arquivoJson)));
+    }
 
 
     @Test
     @Order(1)
-    public void PostUserTest() throws IOException {
-
-        String jsonBody = lerArquivoJson("src/test/resources/json/createUser.json");
-
-        Response response = (Response) given()
-                .contentType(ct)
-                .log().all()
-                .body(jsonBody)
-        .when()
-                .post(uri + "/usuarios")
-        .then()
-                .log().all()
-                .statusCode(201)
-                .body("message", is("Cadastro realizado com sucesso"))
-                .extract()
-                ;
-        idUser = response.jsonPath().getString("_id");
-        System.out.println("O id do usuário é: " + idUser);
-
-    }
-
-    @Test
-    @Order(2)
     public void LoginUserTest() throws IOException {
 
-        String jsonBody = lerArquivoJson("src/test/resources/json/loginUser.json");
+        String jsonBody = lerArquivoJson("src/test/resources/json/loginModUser.json");
 
         Response response = (Response) given()
                 .contentType(ct)
@@ -75,7 +51,7 @@ public class ServeRestProdutoTest {
     }
 
     @Test
-    @Order(3)
+    @Order(2)
     public void PostProdTest() throws IOException {
 
         String jsonBody = lerArquivoJson("src/test/resources/json/createProd.json");
@@ -98,7 +74,22 @@ public class ServeRestProdutoTest {
     }
 
     @Test
-    @Order(4)
+    @Order(3)
+    public void GetAllProdTest(){
+
+        given()
+                .contentType(ct)
+                .log().all()
+                .header("Authorization", auth)
+        .when()
+                .get(uri + "/produtos/")
+        .then()
+                .log().all()
+                .statusCode(200);
+    }
+
+    @Test
+    @Order(3)
     public void GetProdTest(){
 
         given()
@@ -116,10 +107,10 @@ public class ServeRestProdutoTest {
     }
 
     @Test
-    @Order(5)
+    @Order(4)
     public void PutProdTest() throws IOException {
 
-        String jsonBody = lerArquivoJson("src/test/resources/json/ModProd.json");
+        String jsonBody = lerArquivoJson("src/test/resources/json/modProd.json");
 
         given()
                 .contentType(ct)
@@ -135,7 +126,7 @@ public class ServeRestProdutoTest {
     }
 
     @Test
-    @Order(6)
+    @Order(5)
     public void DeleteProdTest(){
 
         given()
@@ -150,19 +141,4 @@ public class ServeRestProdutoTest {
                 .body("message", is("Registro excluído com sucesso"));
     }
 
-    @Test
-    @Order(7)
-    public void DeleteUserTest(){
-
-        given()
-                .contentType(ct)
-                .log().all()
-                .header("Authorization", auth)
-        .when()
-                .delete(uri + "/usuarios/" + idUser)
-        .then()
-                .log().all()
-                .statusCode(200)
-                .body("message", is("Registro excluído com sucesso"));
-    }
 }

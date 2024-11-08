@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
-public class ServeRestProdutoMassaTest {
+public class ProdutoMassaTest {
 
     public String ct = "application/json";
     public String uri = "https://serverest.dev";
@@ -30,32 +30,9 @@ public class ServeRestProdutoMassaTest {
 
     @Test
     @Order(1)
-    public void PostUserTest() throws IOException {
-
-        String jsonBody = lerArquivoJson("src/test/resources/json/createUser.json");
-
-        Response response = (Response) given()
-                .contentType(ct)
-                .log().all()
-                .body(jsonBody)
-        .when()
-                .post(uri + "/usuarios")
-        .then()
-                .log().all()
-                .statusCode(201)
-                .body("message", is("Cadastro realizado com sucesso"))
-                .extract()
-                ;
-        idUser = response.jsonPath().getString("_id");
-        System.out.println("O id do usuário é: " + idUser);
-
-    }
-
-    @Test
-    @Order(2)
     public void LoginUserTest() throws IOException {
 
-        String jsonBody = lerArquivoJson("src/test/resources/json/loginUser.json");
+        String jsonBody = lerArquivoJson("src/test/resources/json/loginModUser.json");
 
         Response response = (Response) given()
                 .contentType(ct)
@@ -75,7 +52,7 @@ public class ServeRestProdutoMassaTest {
     }
 
     @ParameterizedTest
-    @Order(3)
+    @Order(2)
     @CsvFileSource(resources = "/csv/prodMassa.csv", numLinesToSkip = 1, delimiter = ',')
     public void postProdutoMassaTest(String nome,
                                      int preco,
@@ -93,6 +70,7 @@ public class ServeRestProdutoMassaTest {
     Gson gson = new Gson();
     String jsonBody = gson.toJson(produto);
 
+    //POST Produtos
         Response response = (Response) given()
                 .contentType(ct)
                 .log().all()
