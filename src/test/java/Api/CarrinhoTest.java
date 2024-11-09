@@ -1,15 +1,18 @@
 package Api;
 
+import Params.CarrinhoSt;
 import Params.Produto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +34,7 @@ public class CarrinhoTest {
     @Order(1)
     public void LoginUserTest() throws IOException {
 
-        String jsonBody = lerArquivoJson("src/test/resources/json/loginUser.json");
+        String jsonBody = lerArquivoJson("src/test/resources/json/loginModUser.json");
 
         Response response = (Response) given()
                 .contentType(ct)
@@ -49,7 +52,7 @@ public class CarrinhoTest {
 
     }
 
-    /*
+
     @Test
     @Order(2)
     public void GetAllProdTest(){
@@ -65,32 +68,35 @@ public class CarrinhoTest {
                 .statusCode(200)
                 .extract();
 
+        // Extrair a lista de IDs usando JSONPath
+        List<String> idsProdutos = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            String id = response.jsonPath().getString("produtos[" + i + "]._id");
+            idsProdutos.add(id);
+        }
 
-        // Converter a resposta para uma lista de objetos Produto
+        // Imprimir os IDs para verificação
+        System.out.println("IDs dos produtos: " + idsProdutos);
+
+        List<CarrinhoSt> carrinhoRequisicao = new ArrayList<>();
+        for (String id : idsProdutos) {
+            CarrinhoSt produto = new CarrinhoSt();
+            produto.setIdProduto(id);
+            produto.setQuantidade(1);
+            carrinhoRequisicao.add(produto);
+        }
+
+        // Criar um objeto Gson
         Gson gson = new Gson();
-        List<Produto> produtos = gson.fromJson(response.asString(), new TypeToken<List<Produto>>() {}.getType());
 
-        // Selecionar os produtos desejados (exemplo: os dois primeiros)
-        List<String> idsProdutos = produtos.stream()
-                .limit(2)
-                .map(Produto::getId)
-                .collect(Collectors.toList());
+        // Converter a lista de objetos para JSON
+        String jsonRequisicao = gson.toJson(carrinhoRequisicao);
 
-        // Construir o JSON do corpo da requisição para criar o carrinho
-
-        // (Adaptar de acordo com a estrutura esperada pela sua API)
-        String jsonBody = "{\"produtos\": [" +
-                idsProdutos.stream()
-                        .map(id -> "{\"id\": \"" + id + "\"}")
-                        .collect(Collectors.joining(",")) +
-                "]}";
-
-        // Enviar a requisição POST para criar o carrinho
-        // ... (seu código existente para PostCartTest)
+        System.out.println(jsonRequisicao);
     }
 
-     */
 
+    @Disabled
     @Test
     public void PostCartTest() throws IOException {
 
