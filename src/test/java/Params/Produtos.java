@@ -1,6 +1,6 @@
 package Params;
 
-public class Produto {
+public class Produtos {
 
     public String nome;
     public int preco;
